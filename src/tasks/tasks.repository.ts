@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { User } from 'src/auth/user.entity';
 import { Brackets, EntityRepository, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -26,6 +27,18 @@ export class TasksRepository extends Repository<Task> {
 
     const tasks = await query.getMany();
     return tasks;
+  }
+
+  async getTaskById(id: string, user: User): Promise<Task> {
+    const query = this.createQueryBuilder('task');
+
+    query.where('task.id = :id', { id }).andWhere('task.userId = :userId', {
+      userId: user.id,
+    });
+
+    const task = await query.getOne();
+
+    return task;
   }
 
   async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {

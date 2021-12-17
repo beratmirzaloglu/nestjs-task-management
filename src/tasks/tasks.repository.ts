@@ -19,12 +19,8 @@ export class TasksRepository extends Repository<Task> {
 
     if (search) {
       query.andWhere(
-        new Brackets((qp) => {
-          qp.where(
-            'task.title ILIKE :search OR task.description ILIKE :search',
-            { search: `%${search}%` },
-          );
-        }),
+        '(task.title ILIKE :search OR task.description ILIKE :search)',
+        { search: `%${search}%` },
       );
     }
 
